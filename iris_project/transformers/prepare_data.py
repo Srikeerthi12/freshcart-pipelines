@@ -1,11 +1,21 @@
 import pandas as pd
 from sklearn.model_selection import train_test_split
 
-# Import Mage's decorators only if they aren't already loaded
-if 'transformer' not in globals():
+try:
     from mage_ai.data_preparation.decorators import transformer
-if 'test' not in globals():
     from mage_ai.data_preparation.decorators import test
+except ImportError:
+    def identity_decorator(func=None, *args, **kwargs):
+        if func is not None and callable(func):
+            return func
+
+        def decorator(f):
+            return f
+
+        return decorator
+
+    transformer = identity_decorator
+    test = identity_decorator
 
 
 # ransformer marks this as a step that changes data coming from an earlier block
